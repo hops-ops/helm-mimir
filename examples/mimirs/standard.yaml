@@ -1,0 +1,33 @@
+apiVersion: helm.hops.ops.com.ai/v1alpha1
+kind: Mimir
+metadata:
+  name: mimir
+  namespace: example-env
+spec:
+  clusterName: my-cluster
+  namespace: mimir
+  labels:
+    team: platform
+    environment: production
+  providerConfigRef:
+    name: my-cluster
+    kind: ProviderConfig
+  helm:
+    mimir:
+      values:
+        mimir:
+          structuredConfig:
+            common:
+              storage:
+                backend: s3
+                s3:
+                  bucket_name: mimir-blocks
+                  endpoint: s3.amazonaws.com
+        minio:
+          enabled: false
+        ingester:
+          replicas: 3
+        distributor:
+          replicas: 2
+        querier:
+          replicas: 2

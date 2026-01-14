@@ -1,0 +1,44 @@
+# code: language=yaml
+#
+# Grafana Mimir Distributed Helm Release
+#
+
+{{- $m := $state.mimir }}
+---
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: Release
+metadata:
+  name: {{ $m.releaseName }}
+  annotations:
+    {{ setResourceNameAnnotation "helm-release-mimir" }}
+  labels: {{ $m.labels | toJson }}
+spec:
+  managementPolicies: {{ $m.managementPolicies | toJson }}
+  forProvider:
+    chart:
+      name: mimir-distributed
+      repository: https://grafana.github.io/helm-charts
+      version: 6.0.0
+    namespace: {{ $m.namespace }}
+    {{- if $m.overrideAllValues }}
+    values:
+      {{- toYaml $m.overrideAllValues | nindent 6 }}
+    {{- else }}
+    values:
+      fullnameOverride: mimir
+      nameOverride: mimir
+      mimir:
+        structuredConfig:
+          common:
+            storage:
+              backend: filesystem
+      minio:
+        enabled: true
+      {{- if $m.values }}
+      {{- toYaml $m.values | nindent 6 }}
+      {{- end }}
+    {{- end }}
+  rollbackLimit: 3
+  providerConfigRef:
+    name: {{ $m.providerConfigRef.name }}
+    kind: {{ $m.providerConfigRef.kind }}

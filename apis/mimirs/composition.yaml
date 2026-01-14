@@ -1,0 +1,16 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: mimirs.helm.hops.ops.com.ai
+spec:
+  compositeTypeRef:
+    apiVersion: helm.hops.ops.com.ai/v1alpha1
+    kind: Mimir
+  mode: Pipeline
+  pipeline:
+    - step: render
+      functionRef:
+        name: hops-ops-helm-mimirrender
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
