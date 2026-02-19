@@ -25,8 +25,6 @@ spec:
       {{- toYaml $m.overrideAllValues | nindent 6 }}
     {{- else }}
     values:
-      fullnameOverride: mimir
-      nameOverride: mimir
       mimir:
         structuredConfig:
           common:
